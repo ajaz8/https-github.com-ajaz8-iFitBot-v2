@@ -1,3 +1,4 @@
+
 import React from 'react';
 import type { PendingWorkoutPlan, StrengthExercise } from '../types';
 import { User, ShieldCheck, Calendar, Dumbbell, Zap, Flame, Scale, Droplets, Target, Repeat, Layers } from 'lucide-react';
@@ -9,22 +10,25 @@ const Header = ({ plan }: { plan: PendingWorkoutPlan }) => (
     </div>
 );
 
-const InfoBar = ({ plan }: { plan: PendingWorkoutPlan }) => (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-center">
-        <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center justify-center">
-            <div className="flex items-center gap-2 font-semibold text-gray-700"><User size={16} /> Client</div>
-            <div className="text-gray-600 mt-1">{plan.userName}</div>
+const InfoBar = ({ plan }: { plan: PendingWorkoutPlan }) => {
+    const approvalDate = plan.approvedAt ? new Date(plan.approvedAt).toLocaleDateString() : new Date().toLocaleDateString();
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-center">
+            <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center justify-center">
+                <div className="flex items-center gap-2 font-semibold text-gray-700"><User size={16} /> Client</div>
+                <div className="text-gray-600 mt-1">{plan.userName}</div>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center justify-center">
+                <div className="flex items-center gap-2 font-semibold text-gray-700"><ShieldCheck size={16} /> Approved By</div>
+                <div className="text-gray-600 mt-1">{plan.assignedTrainerName}</div>
+            </div>
+            <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center justify-center">
+                <div className="flex items-center gap-2 font-semibold text-gray-700"><Calendar size={16} /> Date</div>
+                <div className="text-gray-600 mt-1">{approvalDate}</div>
+            </div>
         </div>
-        <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center justify-center">
-            <div className="flex items-center gap-2 font-semibold text-gray-700"><ShieldCheck size={16} /> Approved By</div>
-            <div className="text-gray-600 mt-1">{plan.assignedTrainerName}</div>
-        </div>
-        <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center justify-center">
-            <div className="flex items-center gap-2 font-semibold text-gray-700"><Calendar size={16} /> Date</div>
-            <div className="text-gray-600 mt-1">{new Date().toLocaleDateString()}</div>
-        </div>
-    </div>
-);
+    );
+};
 
 const Metric = ({ icon: Icon, label, value, unit }: { icon: React.ElementType, label: string, value: string | number | null | undefined, unit: string }) => (
     <div className="flex items-center gap-3">
@@ -95,6 +99,7 @@ const WorkoutDayCard = ({ day }: { day: any }) => (
 
 const FinalReportContent = React.forwardRef<HTMLDivElement, { plan: PendingWorkoutPlan }>(({ plan }, ref) => {
     const draft = plan.planData.workout_guide_draft;
+    const approvalDate = plan.approvedAt ? new Date(plan.approvedAt).toLocaleDateString() : new Date().toLocaleDateString();
     if (!draft) return <div ref={ref} className="p-8 bg-white text-gray-800">Workout plan data not found.</div>;
     
     return (
@@ -138,8 +143,12 @@ const FinalReportContent = React.forwardRef<HTMLDivElement, { plan: PendingWorko
                     </div>
                 </div>
             </div>
+
+            <div className="mt-12 bg-gray-50 p-4 rounded-lg text-center">
+                <p className="font-semibold text-gray-700">Approved by {plan.assignedTrainerName} on {approvalDate}</p>
+            </div>
             
-            <div className="mt-12 text-center text-xs text-gray-500 border-t pt-6">
+            <div className="mt-8 text-center text-xs text-gray-500 border-t pt-6">
                 <p>This program was designed by iFitBot AI and approved by your certified trainer, {plan.assignedTrainerName}.</p>
                 <p className="mt-1">Disclaimer: Always consult with a healthcare professional before starting any new fitness program. Listen to your body and stop if you feel pain.</p>
             </div>

@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
@@ -54,19 +53,26 @@ export default function App() {
 return (
     <AppContext.Provider value={{ quizData, setQuizData }}>
         <HashRouter>
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/assessment" element={<AssessmentPage />} />
-                <Route path="/report" element={quizData ? <ReportPage /> : <Navigate to="/assessment" />} />
-                <Route path="/workout-guide" element={quizData ? <WorkoutGuidePage /> : <Navigate to="/assessment" />} />
-                <Route path="/my-plan" element={<MyPlanPage />} />
-                <Route path="/progress" element={<ProgressPage />} />
-                <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/trainer-login" element={<TrainerLoginPage />} />
-                <Route path="/trainer-dashboard" element={<TrainerDashboardPage />} />
-                <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
+            <div className="flex flex-col min-h-screen">
+                <main className="flex-grow">
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/assessment" element={<AssessmentPage />} />
+                        <Route path="/report" element={quizData ? <ReportPage /> : <Navigate to="/assessment" />} />
+                        <Route path="/workout-guide" element={<WorkoutGuidePage />} />
+                        <Route path="/my-plan" element={<MyPlanPage />} />
+                        <Route path="/progress" element={<ProgressPage />} />
+                        <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/trainer-login" element={<TrainerLoginPage />} />
+                        <Route path="/trainer-dashboard" element={<TrainerDashboardPage />} />
+                        <Route path="*" element={<Navigate to="/" />} />
+                    </Routes>
+                </main>
+                 <footer className="bg-black text-center p-4 text-xs text-gray-600">
+                    <p>Your program is informational and non-medical. Stop if pain or dizziness. For medical concerns, consult a professional.</p>
+                </footer>
+            </div>
             <ContactSupportIcon />
         </HashRouter>
     </AppContext.Provider>

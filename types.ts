@@ -1,5 +1,4 @@
 
-
 export interface QuizData {
     id?: string;
     name: string;
@@ -122,7 +121,7 @@ export interface LibraryExercise {
 
 // New types for the Workout Guide Generator with Trainer Review
 export interface AssignedTrainer {
-    name: "Athul" | "Rahim" | "Athithiya";
+    name: "Athul" | "Athithiya" | "Saieel";
 }
 
 export interface ExtractedReportData {
@@ -184,12 +183,14 @@ export interface WorkoutPlanApiResponse {
 // New type for storing pending plans for trainer review
 export interface PendingWorkoutPlan {
     id: string; // Unique ID, can be a timestamp
+    userEmail: string; // The email used to retrieve the plan
     userName: string;
-    assignedTrainerName: "Athul" | "Rahim" | "Athithiya";
+    assignedTrainerName: "Athul" | "Athithiya" | "Saieel";
     status: 'pending' | 'approved' | 'rejected';
     generatedAt: string; // ISO string
+    approvedAt?: string; // ISO string, set on approval
     planData: WorkoutPlanApiResponse;
-    quizData: QuizData; // Added to store the original assessment data
+    quizData: QuizData | null; // Added to store the original assessment data
     trainerNotes?: string; // New field for trainer's message
 }
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AppContext } from '../App';
 import type { ReportData, QuizData } from '../types';
@@ -46,9 +45,13 @@ export default function ReportPage() {
             try {
                 const response = await generateAssessmentReport(quizData);
                 setReportData(response);
-            } catch (err) {
-                console.error(err);
-                setError("Failed to generate the AI report. The model may be busy or the request could not be processed. Please try again later.");
+            } catch (err: any) {
+                console.error("Report generation error:", err);
+                if (err.message?.includes("AI_JSON_PARSE_ERROR")) {
+                    setError("The AI had trouble processing your inputs. If you uploaded a photo, please try the assessment again with a clearer, well-lit image.");
+                } else {
+                    setError("Failed to generate the AI report. The service may be experiencing high demand. Please try again in a few moments.");
+                }
             } finally {
                 clearInterval(intervalId);
                 setLoading(false);
@@ -145,7 +148,10 @@ export default function ReportPage() {
                                 <Share2 className="w-4 h-4 mr-2" />
                                 Share
                             </button>
-                            <Link to="/workout-guide" className="w-full sm:w-auto flex-grow bg-gradient-to-r from-lime-500 to-green-500 hover:opacity-90 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center text-center transition-opacity">
+                            <Link
+                                to="/workout-guide"
+                                className="w-full sm:w-auto flex-grow bg-gradient-to-r from-lime-500 to-green-500 hover:opacity-90 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center text-center transition-opacity"
+                            >
                                 Generate My Workout Guide
                             </Link>
                         </div>

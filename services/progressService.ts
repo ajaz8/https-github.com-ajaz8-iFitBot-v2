@@ -1,3 +1,4 @@
+
 import type { UserProgress, WeightEntry, PersonalRecordEntry } from '../types';
 
 const STORAGE_KEY = 'ifit_user_progress';

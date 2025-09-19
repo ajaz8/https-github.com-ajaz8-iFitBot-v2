@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import type { UserProgress, PersonalRecordEntry } from '../../types';
 import { addPersonalRecordEntry, deletePersonalRecordEntry } from '../../services/progressService';

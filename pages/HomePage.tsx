@@ -1,8 +1,8 @@
 
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { FileText, BookOpen, Dumbbell, Scale, Flame, Weight, Building, FileCheck2, TrendingUp } from "lucide-react";
+import { AppContext } from "../App";
 
 const AnimatedTitle = () => {
     const title = "iFit";
@@ -60,6 +60,7 @@ const SplashScreen = ({ onFinished }: { onFinished: () => void }) => {
 
 export default function Home() {
     const [loading, setLoading] = useState(true);
+    const { quizData } = useContext(AppContext);
 
     if (loading) {
         return <SplashScreen onFinished={() => setLoading(false)} />;
@@ -110,10 +111,16 @@ export default function Home() {
                         </div>
                     </Link>
                     <Link to="/workout-guide" className="group relative">
-                        <div className="w-full h-full text-lg p-6 bg-black/50 border border-gray-700 text-white rounded-lg flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 group-hover:border-lime-500">
+                        <div className="w-full h-full p-6 bg-black/50 border border-gray-700 text-white rounded-lg flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 group-hover:border-lime-500 text-center">
                             <Dumbbell className="w-8 h-8 text-gray-400 group-hover:text-lime-500" />
-                            <span className="font-semibold">Workout Guide</span>
-                            <span className="text-sm text-gray-400">Generate your plan</span>
+                            <h3 className="text-xl font-semibold mt-2">Workout Guide</h3>
+                            <p className="text-sm text-gray-400 mt-1 px-2">Turn your assessment into a pro, structured plan—reviewed by a real trainer.</p>
+                            <div className="mt-4 bg-lime-600 text-white py-2 px-4 rounded-lg text-sm font-semibold group-hover:bg-lime-500 transition-colors">
+                                Generate My Workout Guide
+                            </div>
+                            <p className="text-xs text-gray-500 mt-3">
+                                Don’t have an assessment yet? <Link to="/assessment" className="underline hover:text-lime-400" onClick={(e) => e.stopPropagation()}>Start one in 2 minutes.</Link>
+                            </p>
                         </div>
                     </Link>
                     <Link to="/my-plan" className="group relative">

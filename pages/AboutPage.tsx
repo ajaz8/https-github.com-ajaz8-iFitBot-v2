@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Phone, Mail, MapPin, Clock, Star, Dumbbell, Waves, Sparkles, HeartPulse, UserCheck, Music } from 'lucide-react';

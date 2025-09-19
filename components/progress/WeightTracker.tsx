@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import type { UserProgress, WeightEntry } from '../../types';
 import { addWeightEntry } from '../../services/progressService';

@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect, useRef } from 'react';
 import type { ChatMessage, PendingWorkoutPlan } from '../types';
 import { getTrainerChatbotResponse } from '../services/geminiService';
@@ -91,7 +90,7 @@ export default function TrainerChatbot({ plan }: { plan: PendingWorkoutPlan }) {
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask about the plan..."
+                    placeholder="Ask or instruct—e.g., ‘Shorten to 40 min and add knee-friendly options.’”
                     disabled={isLoading}
                     className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-lime-500 disabled:opacity-50"
                 />

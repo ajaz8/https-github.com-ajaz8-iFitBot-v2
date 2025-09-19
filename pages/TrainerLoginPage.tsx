@@ -5,8 +5,8 @@ import { LogIn, ArrowLeft } from 'lucide-react';
 
 const TRAINERS = {
     "Athul": "7778",
-    "Rahim": "7778",
-    "Athithiya": "7778"
+    "Athithiya": "7778",
+    "Saieel": "7778"
 };
 
 export default function TrainerLoginPage() {
@@ -25,7 +25,7 @@ export default function TrainerLoginPage() {
             sessionStorage.setItem('ifit_trainer_user', username);
             navigate('/trainer-dashboard');
         } else {
-            setError('Invalid username or password.');
+            setError('Check your ID and password (7778).');
         }
     };
 
@@ -77,6 +77,9 @@ export default function TrainerLoginPage() {
                         </button>
                     </div>
                 </form>
+                 <p className="text-center text-gray-500 text-xs mt-4">
+                    IDs: Athul · Athithiya · Saieel — Password: 7778
+                </p>
             </div>
         </div>
     );

@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Search, AlertTriangle, TrendingUp, User } from 'lucide-react';

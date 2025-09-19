@@ -1,5 +1,4 @@
 
-
 import React, { useRef, useState } from 'react';
 import type { PendingWorkoutPlan } from '../types';
 import FinalReportContent from './FinalReportContent';
@@ -58,21 +57,27 @@ export default function FinalReportGenerator({ plan, onComplete, backButtonText 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8">
             <div className="max-w-4xl mx-auto">
-                <div className="w-full flex justify-between items-center mb-6">
-                     <button onClick={onComplete} className="text-gray-300 hover:text-lime-500 flex items-center">
-                        <ArrowLeft className="w-4 h-4 mr-2" /> {backButtonText}
-                    </button>
-                    <div className="flex gap-2">
-                         <button onClick={() => generate('image')} disabled={isGenerating} className="bg-gray-700 hover:bg-lime-600 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center transition-colors disabled:opacity-50">
-                            <ImageIcon className="w-4 h-4 mr-2" />
-                            Image
+                 <header className="mb-6">
+                    <div className="w-full flex justify-between items-center">
+                         <button onClick={onComplete} className="text-gray-300 hover:text-lime-500 flex items-center">
+                            <ArrowLeft className="w-4 h-4 mr-2" /> {backButtonText}
                         </button>
-                        <button onClick={() => generate('pdf')} disabled={isGenerating} className="bg-gray-700 hover:bg-lime-600 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center transition-colors disabled:opacity-50">
-                            <Download className="w-4 h-4 mr-2" />
-                            PDF
-                        </button>
+                        <div className="flex gap-2">
+                             <button onClick={() => generate('image')} disabled={isGenerating} className="bg-gray-700 hover:bg-lime-600 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center transition-colors disabled:opacity-50">
+                                <ImageIcon className="w-4 h-4 mr-2" />
+                                JPG Preview
+                            </button>
+                            <button onClick={() => generate('pdf')} disabled={isGenerating} className="bg-gray-700 hover:bg-lime-600 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center transition-colors disabled:opacity-50">
+                                <Download className="w-4 h-4 mr-2" />
+                                Download PDF
+                            </button>
+                        </div>
                     </div>
-                </div>
+                     <div className="text-center mt-6">
+                        <h1 className="text-4xl font-bold">Your Finalized Workout Guide</h1>
+                        <p className="text-lg text-gray-400 mt-1">Reviewed and signed by {plan.assignedTrainerName}. Save your PDF for offline use.</p>
+                    </div>
+                </header>
 
                 {isGenerating && (
                     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex flex-col justify-center items-center z-50">

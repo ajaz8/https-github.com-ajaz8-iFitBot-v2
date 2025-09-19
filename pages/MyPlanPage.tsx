@@ -1,9 +1,8 @@
-
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Search, AlertTriangle, Clock, CheckCircle, XCircle } from 'lucide-react';
 import type { PendingWorkoutPlan } from '../types';
+import { getPendingPlans } from '../services/planService';
 import FinalReportGenerator from '../components/FinalReportGenerator';
 
 const StatusBadge = ({ status }: { status: 'pending' | 'approved' | 'rejected' }) => {
@@ -38,9 +37,8 @@ export default function MyPlanPage() {
         }
 
         try {
-            const allPlansJSON = localStorage.getItem('pending_plans');
-            const allPlans: PendingWorkoutPlan[] = allPlansJSON ? JSON.parse(allPlansJSON) : [];
-            const userPlans = allPlans.filter(plan => plan.quizData.email.toLowerCase() === email.toLowerCase())
+            const allPlans = getPendingPlans();
+            const userPlans = allPlans.filter(plan => plan.userEmail.toLowerCase() === email.toLowerCase())
                                       .sort((a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime());
             setFoundPlans(userPlans);
         } catch (err) {
@@ -105,15 +103,18 @@ export default function MyPlanPage() {
                                         </button>
                                     )}
                                      {plan.status === 'rejected' && (
-                                         <p className="text-sm text-red-400 sm:text-right">Please contact support for more information or retake the assessment.</p>
+                                         <p className="text-sm text-red-400 sm:text-right">This draft needs trainer review before it can be released.</p>
                                      )}
                                 </div>
-                                {plan.status === 'approved' && plan.trainerNotes && (
+                                {plan.status === 'approved' && (
                                     <div className="mt-4 pt-4 border-t border-gray-700">
-                                        <div className="p-4 bg-lime-900/50 border-l-4 border-lime-500 rounded-r-lg">
-                                            <p className="font-bold text-lime-400">A Note from Your Trainer, {plan.assignedTrainerName}:</p>
-                                            <p className="text-gray-300 mt-1 italic">"{plan.trainerNotes}"</p>
-                                        </div>
+                                         <p className="text-sm text-gray-300 mb-2">Your guide is finalized and ready to download. Enjoy a structured, safe plan that matches your assessment.</p>
+                                        {plan.trainerNotes && (
+                                            <div className="p-4 bg-lime-900/50 border-l-4 border-lime-500 rounded-r-lg">
+                                                <p className="font-bold text-lime-400">A Note from Your Trainer, {plan.assignedTrainerName}:</p>
+                                                <p className="text-gray-300 mt-1 italic">"{plan.trainerNotes}"</p>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
