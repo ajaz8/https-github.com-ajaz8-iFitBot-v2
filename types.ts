@@ -1,3 +1,5 @@
+
+
 export interface QuizData {
     id?: string;
     name: string;
@@ -6,50 +8,60 @@ export interface QuizData {
     age: number;
     currentWeight: number;
     height: number;
+    waistCm?: number;
     goal: 'lose_weight' | 'gain_muscle' | 'get_shredded';
     targetWeight: number;
     targetPeriodWeeks: number;
-    bodyImage?: string; // Base64 encoded image data
+    bodyImage?: string;
+    dailyActivity: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active';
+    avgStepsPerDay?: number;
+    sittingHoursPerDay?: number;
     fitnessLevel: 'beginner' | 'amateur' | 'advanced';
-    workoutFrequency: 'not_at_all' | '1-2_times' | '3_times' | 'more_than_3';
+    gymDaysPerWeek: number;
+    minutesPerSession?: number;
     workoutLocation: 'home' | 'gym' | 'both';
     sleepHours: 'less_than_5' | '5_to_6' | '7_to_8' | 'more_than_8';
     stressLevel: 'low' | 'moderate' | 'high';
+    waterIntakeLiters: number;
+    junkMealsPerWeek: number;
+    sugaryDrinksPerDay: number;
+    eveningHunger: 'light' | 'normal' | 'heavy' | 'order_outside';
     dietType: 'balanced' | 'low_carb' | 'vegetarian' | 'vegan' | 'other';
-    // New fields for deeper insights
-    waterIntake: 'less_than_1l' | '1_to_2l' | 'more_than_2l';
-    dailyActivity: 'sedentary' | 'lightly_active' | 'moderately_active' | 'very_active';
     motivation: string;
 }
 
-export interface ReportData {
-    summary: string;
-    metrics: {
-        bmi: number;
-        bmi_category: string;
-        bmr: number;
-        tdee: number;
-    };
-    nutrition: {
-        daily_calories: number;
-        calorie_explanation: string;
-        macros: {
-            protein_grams: number;
-            carbs_grams: number;
-            fat_grams: number;
-        };
-    };
-    sampleMealDay: {
-        title: string;
-        meals: {
-            name: string;
-            description: string;
-        }[];
-    };
-    // New field for AI-driven lifestyle insights
-    potentialChallenges: string[];
-    recommendations: string[];
+export interface Flag {
+    issue: string;
+    severity: "low" | "medium" | "high";
+    why: string;
 }
+
+export interface ReportData {
+    numbers: {
+        current_intake_kcal: number;
+        current_burn_kcal: number;
+        calorie_gap_kcal: number;
+    };
+    nutrition_targets: {
+        recommended_calories_kcal: number;
+        protein_g: number;
+        water_l: number;
+        carbs_g_range: [number, number] | null;
+        fats_g_range: [number, number] | null;
+    };
+    body_comp: {
+        estimated_bf_percent: number;
+        bf_ideal_band: [number, number];
+        bf_status: "below" | "within" | "above";
+        estimated_tbw_percent: number;
+        tbw_typical_band: [number, number];
+        tbw_status: "below" | "within" | "above";
+    };
+    flags: Flag[];
+    methodology: string[];
+    report_markdown: string;
+}
+
 
 export interface Exercise {
     name: string;
@@ -74,6 +86,7 @@ export interface WeeklyWorkout {
 }
 
 export interface WorkoutPlan {
+    userName: string;
     title: string;
     description: string;
     duration_weeks: number;
@@ -105,4 +118,101 @@ export interface LibraryExercise {
   equipment: Equipment;
   difficulty: Difficulty;
   variations?: Variation[];
+}
+
+// New types for the Workout Guide Generator with Trainer Review
+export interface AssignedTrainer {
+    name: "Athul" | "Rahim" | "Athithiya";
+}
+
+export interface ExtractedReportData {
+    recommended_calories_kcal: number | null;
+    current_burn_kcal: number | null;
+    current_intake_kcal: number | null;
+    calorie_gap_kcal: number | null;
+    protein_target_g: number | null;
+    water_target_l: number | null;
+    predicted_loss_kg_per_week: number | null;
+    weeks_to_lose_10kg: number | null;
+    parse_notes: string;
+}
+
+export interface WorkoutPhase {
+    name: "Foundation" | "Build" | "Peak";
+    weeks: [number, number];
+    focus: string;
+}
+
+export interface StrengthExercise {
+    movement: string;
+    sets: number;
+    reps: string;
+    rpe_or_tempo: string;
+    alt_bodyweight: string | null;
+    alt_minimal: string | null;
+}
+
+export interface WorkoutDay {
+    day_name: string;
+    warmup: { duration_min: number; notes: string };
+    strength: StrengthExercise[];
+    conditioning: { style: "steady" | "interval"; duration_min: number; notes: string };
+    cooldown: { duration_min: number; notes: string };
+}
+
+export interface WorkoutGuideDraft {
+    program_weeks: number;
+    weekly_days: number;
+    phases: WorkoutPhase[];
+    equipment_tier: "bodyweight" | "minimal" | "full";
+    days: WorkoutDay[];
+    progression_notes: string;
+    safety_notes: string;
+}
+
+export interface WorkoutPlanApiResponse {
+    needs_assessment: boolean;
+    cta_copy: { title: string; subtitle: string; button_label: string } | null;
+    assigned_trainer: AssignedTrainer | null;
+    extracted_from_report: ExtractedReportData | null;
+    workout_guide_draft: WorkoutGuideDraft | null;
+    presentation_markdown: string;
+    trainer_checklist?: string[];
+    signature_line?: string;
+}
+
+// New type for storing pending plans for trainer review
+export interface PendingWorkoutPlan {
+    id: string; // Unique ID, can be a timestamp
+    userName: string;
+    assignedTrainerName: "Athul" | "Rahim" | "Athithiya";
+    status: 'pending' | 'approved' | 'rejected';
+    generatedAt: string; // ISO string
+    planData: WorkoutPlanApiResponse;
+    quizData: QuizData; // Added to store the original assessment data
+    trainerNotes?: string; // New field for trainer's message
+}
+
+// New type for the trainer chatbot
+export interface ChatMessage {
+    role: 'user' | 'model';
+    text: string;
+}
+
+// New types for Progress Tracking
+export interface WeightEntry {
+  date: string; // ISO string
+  weight: number;
+}
+
+export interface PersonalRecordEntry {
+  id: string; // Unique ID, e.g., timestamp
+  date: string; // ISO string
+  exercise: string;
+  value: string; // e.g., "100kg x 5 reps"
+}
+
+export interface UserProgress {
+  weightLog: WeightEntry[];
+  personalRecords: PersonalRecordEntry[];
 }

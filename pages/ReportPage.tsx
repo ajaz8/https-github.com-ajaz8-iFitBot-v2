@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AppContext } from '../App';
 import type { ReportData, QuizData } from '../types';
@@ -67,7 +68,7 @@ export default function ReportPage() {
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
             pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save(`iFitBot_Assessment_${quizData?.name}.pdf`);
+            pdf.save(`iFit_Assessment_${quizData?.name}.pdf`);
         });
     };
 
@@ -78,7 +79,7 @@ export default function ReportPage() {
             const image = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.href = image;
-            link.download = `iFitBot_Assessment_${quizData?.name}.png`;
+            link.download = `iFit_Assessment_${quizData?.name}.png`;
             link.click();
         });
     };
@@ -86,8 +87,8 @@ export default function ReportPage() {
     const handleShare = () => {
         if (navigator.share) {
             navigator.share({
-                title: 'My iFitBot Body Assessment',
-                text: 'Check out my personalized fitness assessment from iFitBot!',
+                title: 'My iFit Body Assessment',
+                text: 'Check out my personalized fitness assessment from iFit!',
                 url: window.location.href,
             }).catch(console.error);
         } else {
@@ -97,6 +98,15 @@ export default function ReportPage() {
 
     return (
         <div className="min-h-screen bg-gray-900 flex flex-col items-center p-4 md:p-8">
+            <style>{`
+                @keyframes content-fade-in {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-content-fade-in {
+                    animation: content-fade-in 0.8s ease-out forwards;
+                }
+            `}</style>
             <div className="w-full max-w-5xl">
                  <div className="w-full flex justify-between items-center mb-4">
                     <Link to="/assessment" className="text-gray-300 hover:text-lime-500 flex items-center">
@@ -121,7 +131,7 @@ export default function ReportPage() {
                     </div>
                 )}
                 {!loading && !error && reportData && quizData && (
-                    <>
+                    <div className="animate-content-fade-in">
                         <div className="mb-6 bg-gray-800/50 rounded-lg p-2 flex flex-col sm:flex-row gap-2 justify-center items-center">
                             <button onClick={handleSaveAsPdf} className="w-full sm:w-auto bg-gray-700 hover:bg-lime-600 text-white font-bold py-2 px-4 rounded-md flex items-center justify-center transition-colors">
                                 <Download className="w-4 h-4 mr-2" />
@@ -140,7 +150,7 @@ export default function ReportPage() {
                             </Link>
                         </div>
                         <ReportContent ref={reportRef} reportData={reportData} quizData={quizData} />
-                    </>
+                    </div>
                 )}
             </div>
         </div>

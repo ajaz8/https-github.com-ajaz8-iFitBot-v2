@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-// FIX: Replaced non-existent 'Swimmer' icon and other emojis with appropriate icons from lucide-react for UI consistency.
 import { ArrowLeft, Phone, Mail, MapPin, Clock, Star, Dumbbell, Waves, Sparkles, HeartPulse, UserCheck, Music } from 'lucide-react';
 
 const InfoCard = ({ icon: Icon, title, children }: { icon: React.ElementType, title: string, children: React.ReactNode }) => (
@@ -66,7 +65,6 @@ export default function AboutPage() {
 
                     <div className="md:col-span-2 bg-gray-800/50 border border-gray-700 rounded-lg p-6">
                          <h3 className="text-xl font-semibold text-white mb-4 text-center">Facilities & Services</h3>
-                         {/* FIX: Replaced emojis with lucide-react icons for consistency and to fix import error */}
                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
                             <div className="flex flex-col items-center p-2"><HeartPulse className="w-8 h-8 text-lime-400 mb-2"/><span>Cardio</span></div>
                             <div className="flex flex-col items-center p-2"><Dumbbell className="w-8 h-8 text-lime-400 mb-2"/><span>Weight Training</span></div>

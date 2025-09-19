@@ -1,9 +1,11 @@
+
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FileText, BookOpen, Dumbbell, Scale, Flame, Weight, Building } from "lucide-react";
+import { FileText, BookOpen, Dumbbell, Scale, Flame, Weight, Building, FileCheck2, TrendingUp } from "lucide-react";
 
 const AnimatedTitle = () => {
-    const title = "iFitBot";
+    const title = "iFit";
     const tagline = "Your AI Personal Trainer";
 
     return (
@@ -79,8 +81,8 @@ export default function Home() {
                 <div className="mb-16">
                     <AnimatedTitle />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl">
-                    <Link to="/assessment" className="group relative md:col-span-2 lg:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+                    <Link to="/assessment" className="group relative md:col-span-2">
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-lime-500 to-green-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
                         <div className="w-full h-full p-6 bg-gray-900 text-white rounded-lg relative flex flex-col justify-between transition-transform group-hover:scale-105">
                             <div className="flex items-center gap-4">
@@ -114,6 +116,20 @@ export default function Home() {
                             <span className="text-sm text-gray-400">Generate your plan</span>
                         </div>
                     </Link>
+                    <Link to="/my-plan" className="group relative">
+                        <div className="w-full h-full text-lg p-6 bg-black/50 border border-gray-700 text-white rounded-lg flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 group-hover:border-lime-500">
+                            <FileCheck2 className="w-8 h-8 text-gray-400 group-hover:text-lime-500" />
+                            <span className="font-semibold">My Approved Plan</span>
+                            <span className="text-sm text-gray-400">Check status & download</span>
+                        </div>
+                    </Link>
+                    <Link to="/progress" className="group relative">
+                        <div className="w-full h-full text-lg p-6 bg-black/50 border border-gray-700 text-white rounded-lg flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 group-hover:border-lime-500">
+                            <TrendingUp className="w-8 h-8 text-gray-400 group-hover:text-lime-500" />
+                            <span className="font-semibold">Progress Tracker</span>
+                            <span className="text-sm text-gray-400">Log weights & PRs</span>
+                        </div>
+                    </Link>
                     <Link to="/exercise-library" className="group relative">
                         <div className="w-full h-full text-lg p-6 bg-black/50 border border-gray-700 text-white rounded-lg flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 group-hover:border-lime-500">
                             <BookOpen className="w-8 h-8 text-gray-400 group-hover:text-lime-500" />
@@ -121,7 +137,7 @@ export default function Home() {
                             <span className="text-sm text-gray-400">Browse techniques</span>
                         </div>
                     </Link>
-                    <Link to="/about" className="group relative md:col-span-2 lg:col-span-2">
+                    <Link to="/about" className="group relative md:col-span-2">
                         <div className="w-full h-full text-lg p-6 bg-black/50 border border-gray-700 text-white rounded-lg flex flex-col items-center justify-center gap-2 transition-transform group-hover:scale-105 group-hover:border-lime-500">
                             <Building className="w-8 h-8 text-gray-400 group-hover:text-lime-500" />
                             <span className="font-semibold">Our Gym</span>
@@ -129,6 +145,12 @@ export default function Home() {
                         </div>
                     </Link>
                 </div>
+                <footer className="relative z-10 mt-16 text-center text-gray-500 text-sm">
+                    <p className="mb-2">&copy; {new Date().getFullYear()} iFit. All rights reserved.</p>
+                    <Link to="/trainer-login" className="hover:text-lime-400 transition-colors">
+                        Trainer Portal
+                    </Link>
+                </footer>
             </div>
         </div>
     );

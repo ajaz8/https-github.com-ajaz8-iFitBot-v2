@@ -45,7 +45,6 @@ export default function BodyFatSelector({ value, onChange }: BodyFatSelectorProp
     const [bubbleLabel, setBubbleLabel] = useState('');
     const [bubbleLeft, setBubbleLeft] = useState('50%');
 
-    // FIX: Initialize useRef with null for DOM elements to provide an initial value and create a mutable ref object.
     const imageRef = useRef<HTMLImageElement | null>(null);
     const bufferCanvasRef = useRef<HTMLCanvasElement | null>(null);
     const regionRef = useRef<any>({});

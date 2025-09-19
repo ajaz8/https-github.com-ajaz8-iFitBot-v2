@@ -15,7 +15,7 @@ export default function QuizWelcome({ onStart }: { onStart: () => void }) {
                         <Sparkles className="w-12 h-12 text-white" />
                     </div>
                     <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
-                        iFitBot Assessment
+                        iFit Assessment
                         <span className="block text-lime-500 text-4xl md:text-5xl mt-2">
                             Ready to Start?
                         </span>
