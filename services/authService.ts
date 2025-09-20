@@ -1,25 +1,21 @@
 // services/authService.ts
-
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 
-// 🔹 Register new user and save to Firestore
-export async function registerUser(name: string, email: string, password: string) {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  const user = userCredential.user;
+// 🔹 Google login
+export async function loginWithGoogle() {
+  const provider = new GoogleAuthProvider();
+  const result = await signInWithPopup(auth, provider);
 
+  const user = result.user;
+
+  // Save user to Firestore (if new)
   await setDoc(doc(db, "users", user.uid), {
-    name,
-    email,
+    name: user.displayName,
+    email: user.email,
     createdAt: new Date(),
-  });
+  }, { merge: true }); // merge = don’t overwrite if user already exists
 
   return user;
-}
-
-// 🔹 Login existing user
-export async function loginUser(email: string, password: string) {
-  const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  return userCredential.user;
 }
