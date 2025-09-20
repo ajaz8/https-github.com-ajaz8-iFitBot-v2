@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
@@ -13,70 +12,82 @@ import MyPlanPage from './pages/MyPlanPage';
 import ProgressPage from './pages/ProgressPage';
 import ContactSupportIcon from './components/ContactSupportIcon';
 import OnboardingPage from './pages/OnboardingPage';
+import GoogleLoginButton from './components/GoogleLoginButton'; // ✅ Added
 import type { QuizData } from './types';
 
 export const AppContext = React.createContext<{
-quizData: QuizData | null;
-setQuizData: React.Dispatch<React.SetStateAction<QuizData | null>>;
+  quizData: QuizData | null;
+  setQuizData: React.Dispatch<React.SetStateAction<QuizData | null>>;
 }>({
-quizData: null,
-setQuizData: () => {},
+  quizData: null,
+  setQuizData: () => {},
 });
 
 const QUIZ_DATA_STORAGE_KEY = 'ifit_latest_quiz_data';
 
 export default function App() {
-    // Initialize state from localStorage
-    const [quizData, setQuizData] = useState<QuizData | null>(() => {
-        try {
-            const savedData = localStorage.getItem(QUIZ_DATA_STORAGE_KEY);
-            return savedData ? JSON.parse(savedData) : null;
-        } catch (error) {
-            console.error("Failed to load quiz data from localStorage", error);
-            return null;
-        }
-    });
+  // Initialize state from localStorage
+  const [quizData, setQuizData] = useState<QuizData | null>(() => {
+    try {
+      const savedData = localStorage.getItem(QUIZ_DATA_STORAGE_KEY);
+      return savedData ? JSON.parse(savedData) : null;
+    } catch (error) {
+      console.error("Failed to load quiz data from localStorage", error);
+      return null;
+    }
+  });
 
-    // Effect to save to localStorage whenever quizData changes
-    useEffect(() => {
-        try {
-            if (quizData) {
-                localStorage.setItem(QUIZ_DATA_STORAGE_KEY, JSON.stringify(quizData));
-            } else {
-                localStorage.removeItem(QUIZ_DATA_STORAGE_KEY);
-            }
-        } catch (error) {
-            console.error("Failed to save quiz data to localStorage", error);
-        }
-    }, [quizData]);
+  // Effect to save to localStorage whenever quizData changes
+  useEffect(() => {
+    try {
+      if (quizData) {
+        localStorage.setItem(QUIZ_DATA_STORAGE_KEY, JSON.stringify(quizData));
+      } else {
+        localStorage.removeItem(QUIZ_DATA_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error("Failed to save quiz data to localStorage", error);
+    }
+  }, [quizData]);
 
-
-return (
+  return (
     <AppContext.Provider value={{ quizData, setQuizData }}>
-        <HashRouter>
-            <div className="flex flex-col min-h-screen">
-                <main className="flex-grow">
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/onboarding" element={<OnboardingPage />} />
-                        <Route path="/assessment" element={<AssessmentPage />} />
-                        <Route path="/report" element={quizData ? <ReportPage /> : <Navigate to="/assessment" />} />
-                        <Route path="/workout-guide" element={<WorkoutGuidePage />} />
-                        <Route path="/my-plan" element={<MyPlanPage />} />
-                        <Route path="/progress" element={<ProgressPage />} />
-                        <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
-                        <Route path="/about" element={<AboutPage />} />
-                        <Route path="/trainer-login" element={<TrainerLoginPage />} />
-                        <Route path="/trainer-dashboard" element={<TrainerDashboardPage />} />
-                        <Route path="*" element={<Navigate to="/" />} />
-                    </Routes>
-                </main>
-                 <footer className="bg-black text-center p-4 text-xs text-gray-600">
-                    <p>Your program is informational and non-medical. Stop if pain or dizziness. For medical concerns, consult a professional.</p>
-                </footer>
+      <HashRouter>
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow">
+            {/* ✅ Google Login Button added at the top */}
+            <div className="flex justify-center mt-4">
+              <GoogleLoginButton />
             </div>
-            <ContactSupportIcon />
-        </HashRouter>
+
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/assessment" element={<AssessmentPage />} />
+              <Route
+                path="/report"
+                element={quizData ? <ReportPage /> : <Navigate to="/assessment" />}
+              />
+              <Route path="/workout-guide" element={<WorkoutGuidePage />} />
+              <Route path="/my-plan" element={<MyPlanPage />} />
+              <Route path="/progress" element={<ProgressPage />} />
+              <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/trainer-login" element={<TrainerLoginPage />} />
+              <Route path="/trainer-dashboard" element={<TrainerDashboardPage />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </main>
+
+          <footer className="bg-black text-center p-4 text-xs text-gray-600">
+            <p>
+              Your program is informational and non-medical. Stop if pain or dizziness.
+              For medical concerns, consult a professional.
+            </p>
+          </footer>
+        </div>
+        <ContactSupportIcon />
+      </HashRouter>
     </AppContext.Provider>
-);
+  );
 }
