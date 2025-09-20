@@ -12,6 +12,7 @@ import TrainerDashboardPage from './pages/TrainerDashboardPage';
 import MyPlanPage from './pages/MyPlanPage';
 import ProgressPage from './pages/ProgressPage';
 import ContactSupportIcon from './components/ContactSupportIcon';
+import OnboardingPage from './pages/OnboardingPage';
 import type { QuizData } from './types';
 
 export const AppContext = React.createContext<{
@@ -57,6 +58,7 @@ return (
                 <main className="flex-grow">
                     <Routes>
                         <Route path="/" element={<HomePage />} />
+                        <Route path="/onboarding" element={<OnboardingPage />} />
                         <Route path="/assessment" element={<AssessmentPage />} />
                         <Route path="/report" element={quizData ? <ReportPage /> : <Navigate to="/assessment" />} />
                         <Route path="/workout-guide" element={<WorkoutGuidePage />} />

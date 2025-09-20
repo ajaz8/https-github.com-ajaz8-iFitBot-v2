@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Check, ChevronDown } from 'lucide-react';
 import type { LibraryExercise } from '../types';
@@ -96,12 +95,20 @@ export default function ExerciseDetailModal({ exercise, isOpen, onClose }: Exerc
 
                         {exercise.variations && exercise.variations.length > 0 && (
                             <div className="mt-8 pt-6 border-t border-gray-700">
-                                <button onClick={() => setVariationsOpen(!variationsOpen)} className="w-full flex justify-between items-center text-left text-xl font-semibold text-white">
+                                <button
+                                    onClick={() => setVariationsOpen(!variationsOpen)}
+                                    className="w-full flex justify-between items-center text-left text-xl font-semibold text-white"
+                                    aria-expanded={variationsOpen}
+                                    aria-controls="variations-content"
+                                >
                                     <span>Exercise Variations</span>
-                                    <ChevronDown className={`w-6 h-6 transition-transform ${variationsOpen ? 'rotate-180' : ''}`} />
+                                    <ChevronDown className={`w-6 h-6 transition-transform duration-300 ${variationsOpen ? 'rotate-180' : ''}`} />
                                 </button>
-                                {variationsOpen && (
-                                    <div className="mt-4 space-y-4 pl-2 border-l-2 border-gray-700">
+                                <div
+                                    id="variations-content"
+                                    className={`overflow-hidden transition-all duration-500 ease-in-out ${variationsOpen ? 'max-h-96 mt-4' : 'max-h-0'}`}
+                                >
+                                    <div className="space-y-4 pl-2 border-l-2 border-gray-700">
                                         {exercise.variations.map((variation, index) => (
                                             <div key={index} className="pl-4">
                                                 <h4 className="font-bold text-lime-400">{variation.name}</h4>
@@ -109,7 +116,7 @@ export default function ExerciseDetailModal({ exercise, isOpen, onClose }: Exerc
                                             </div>
                                         ))}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         )}
                     </div>

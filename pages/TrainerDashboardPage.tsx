@@ -3,11 +3,28 @@ import { useNavigate, Link } from 'react-router-dom';
 import { LogOut, ArrowLeft, User, ListChecks, Check, X, FileText, Calendar, Shield, MessageSquare, CheckSquare, Clock, CheckCircle, XCircle, ChevronDown, Activity, Zap, Layers, Wind } from 'lucide-react';
 import type { PendingWorkoutPlan } from '../types';
 import { getPendingPlans, updatePlan } from '../services/planService';
+import { generateAutoTrainerNote } from '../services/geminiService';
 import FinalReportGenerator from '../components/FinalReportGenerator';
 import TrainerChatbot from '../components/TrainerChatbot';
 
 const ReviewModal = ({ plan, onClose, onUpdateStatus }: { plan: PendingWorkoutPlan, onClose: () => void, onUpdateStatus: (id: string, status: 'approved' | 'rejected', notes?: string) => void }) => {
     const [trainerNotes, setTrainerNotes] = useState('');
+    const [isNoteLoading, setIsNoteLoading] = useState(true);
+
+    useEffect(() => {
+        const generateNote = async () => {
+            if (plan) {
+                setIsNoteLoading(true);
+                setTrainerNotes(''); // Clear previous note
+                const note = await generateAutoTrainerNote(plan.userName, plan.assignedTrainerName, plan.quizData);
+                setTrainerNotes(note);
+                setIsNoteLoading(false);
+            }
+        };
+
+        generateNote();
+    }, [plan]);
+
     if (!plan) return null;
     const { workout_guide_draft: draft, trainer_checklist } = plan.planData;
 
@@ -110,9 +127,10 @@ const ReviewModal = ({ plan, onClose, onUpdateStatus }: { plan: PendingWorkoutPl
                                 <textarea
                                     value={trainerNotes}
                                     onChange={(e) => setTrainerNotes(e.target.value)}
-                                    rows={3}
-                                    placeholder="e.g., 'Great plan to start with! Focus on form for the first two weeks. Let's crush this!'"
-                                    className="w-full bg-gray-900 text-white rounded-lg p-3 border-2 border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-lime-500 transition"
+                                    rows={4}
+                                    placeholder={isNoteLoading ? "Generating a personal note for you..." : "Add a personal, encouraging message for your client..."}
+                                    disabled={isNoteLoading}
+                                    className="w-full bg-gray-900 text-white rounded-lg p-3 border-2 border-gray-600 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-lime-500 transition disabled:opacity-70"
                                 />
                                  <div className="mt-4 flex flex-col sm:flex-row justify-end gap-3">
                                     <button onClick={() => onUpdateStatus(plan.id, 'rejected')} className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors">

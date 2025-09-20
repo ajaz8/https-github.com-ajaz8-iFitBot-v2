@@ -163,6 +163,10 @@ export interface WorkoutGuideDraft {
     program_weeks: number;
     weekly_days: number;
     phases: WorkoutPhase[];
+    progression_principle: {
+        title: string;
+        description: string;
+    };
     equipment_tier: "bodyweight" | "minimal" | "full";
     days: WorkoutDay[];
     progression_notes: string;

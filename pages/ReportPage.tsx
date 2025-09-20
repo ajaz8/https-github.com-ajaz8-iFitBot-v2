@@ -44,13 +44,18 @@ export default function ReportPage() {
             
             try {
                 const response = await generateAssessmentReport(quizData);
-                setReportData(response);
+                if (response.report_markdown.startsWith("⚠️")) {
+                     setError("Failed to generate the AI report. The service may be experiencing high demand or had an issue with your data. Please try again in a few moments.");
+                     setReportData(null); // Ensure no partial/error data is shown
+                } else {
+                    setReportData(response);
+                }
             } catch (err: any) {
                 console.error("Report generation error:", err);
                 if (err.message?.includes("AI_JSON_PARSE_ERROR")) {
-                    setError("The AI had trouble processing your inputs. If you uploaded a photo, please try the assessment again with a clearer, well-lit image.");
+                    setError("The AI had trouble formatting its response. This is a temporary issue, please try generating the report again.");
                 } else {
-                    setError("Failed to generate the AI report. The service may be experiencing high demand. Please try again in a few moments.");
+                    setError("Failed to generate the AI report. A network or service error occurred. Please try again in a few moments.");
                 }
             } finally {
                 clearInterval(intervalId);
