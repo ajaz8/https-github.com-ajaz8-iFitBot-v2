@@ -1,12 +1,12 @@
-// components/GoogleLoginButton.tsx
 import { loginWithGoogle } from "../services/authService";
 
-export default function GoogleLoginButton() {
+export default function GoogleLoginButton({ onLoginSuccess }: { onLoginSuccess?: () => void }) {
   async function handleGoogleLogin() {
     try {
       const user = await loginWithGoogle();
       console.log("✅ Logged in with Google:", user);
       alert("Welcome " + user.displayName);
+      if (onLoginSuccess) onLoginSuccess(); // ✅ notify parent
     } catch (err) {
       console.error("❌ Google login error:", err);
       alert("Login failed: " + (err as Error).message);
