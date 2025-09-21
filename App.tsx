@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
@@ -10,84 +11,127 @@ import TrainerLoginPage from './pages/TrainerLoginPage';
 import TrainerDashboardPage from './pages/TrainerDashboardPage';
 import MyPlanPage from './pages/MyPlanPage';
 import ProgressPage from './pages/ProgressPage';
+import ProfilePage from './pages/ProfilePage'; // Import the new ProfilePage
 import ContactSupportIcon from './components/ContactSupportIcon';
-import OnboardingPage from './pages/OnboardingPage';
-import GoogleLoginButton from './components/GoogleLoginButton'; // ✅ Added
-import type { QuizData } from './types';
+import type { QuizData, FirebaseUser, UserProfile } from './types';
+import { auth } from './services/firebase';
+// FIX: Removed 'onAuthStateChanged' from 'firebase/auth' as it is not a valid export in the compat version. It will be called as a method on the auth object.
+import { getUserProfile, createUserProfile, saveUserAssessment } from './services/userService';
+
+export const AuthContext = React.createContext<{
+    currentUser: FirebaseUser | null;
+    userProfile: UserProfile | null;
+    authLoading: boolean;
+}>({
+    currentUser: null,
+    userProfile: null,
+    authLoading: true,
+});
 
 export const AppContext = React.createContext<{
-  quizData: QuizData | null;
-  setQuizData: React.Dispatch<React.SetStateAction<QuizData | null>>;
+quizData: QuizData | null;
+setQuizData: (data: QuizData | null) => void;
 }>({
-  quizData: null,
-  setQuizData: () => {},
+quizData: null,
+setQuizData: () => {},
 });
 
 const QUIZ_DATA_STORAGE_KEY = 'ifit_latest_quiz_data';
 
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    const { currentUser, authLoading } = React.useContext(AuthContext);
+    if (authLoading) {
+        return <div className="min-h-screen bg-gray-900 flex justify-center items-center"><div className="w-8 h-8 border-4 border-lime-500 border-dashed rounded-full animate-spin"></div></div>;
+    }
+    return currentUser ? <>{children}</> : <Navigate to="/" />;
+};
+
 export default function App() {
-  // Initialize state from localStorage
-  const [quizData, setQuizData] = useState<QuizData | null>(() => {
-    try {
-      const savedData = localStorage.getItem(QUIZ_DATA_STORAGE_KEY);
-      return savedData ? JSON.parse(savedData) : null;
-    } catch (error) {
-      console.error("Failed to load quiz data from localStorage", error);
-      return null;
-    }
-  });
+    // Auth and Profile state
+    const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [authLoading, setAuthLoading] = useState(true);
 
-  // Effect to save to localStorage whenever quizData changes
-  useEffect(() => {
-    try {
-      if (quizData) {
-        localStorage.setItem(QUIZ_DATA_STORAGE_KEY, JSON.stringify(quizData));
-      } else {
-        localStorage.removeItem(QUIZ_DATA_STORAGE_KEY);
-      }
-    } catch (error) {
-      console.error("Failed to save quiz data to localStorage", error);
-    }
-  }, [quizData]);
+    // App state
+    const [quizData, setQuizData] = useState<QuizData | null>(null);
 
-  return (
-    <AppContext.Provider value={{ quizData, setQuizData }}>
-      <HashRouter>
-        <div className="flex flex-col min-h-screen">
-          <main className="flex-grow">
-            {/* ✅ Google Login Button added at the top */}
-            <div className="flex justify-center mt-4">
-              <GoogleLoginButton />
-            </div>
+    // Effect to listen for auth changes and manage user profiles
+    useEffect(() => {
+        // FIX: Use v8 compat syntax for onAuthStateChanged.
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const { uid, displayName, email, photoURL } = user;
+                const firebaseUser = { uid, displayName, email, photoURL };
+                setCurrentUser(firebaseUser);
 
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/onboarding" element={<OnboardingPage />} />
-              <Route path="/assessment" element={<AssessmentPage />} />
-              <Route
-                path="/report"
-                element={quizData ? <ReportPage /> : <Navigate to="/assessment" />}
-              />
-              <Route path="/workout-guide" element={<WorkoutGuidePage />} />
-              <Route path="/my-plan" element={<MyPlanPage />} />
-              <Route path="/progress" element={<ProgressPage />} />
-              <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/trainer-login" element={<TrainerLoginPage />} />
-              <Route path="/trainer-dashboard" element={<TrainerDashboardPage />} />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </main>
+                // Check for existing profile or create a new one
+                let profile = await getUserProfile(uid);
+                if (!profile) {
+                    profile = await createUserProfile(firebaseUser);
+                }
+                setUserProfile(profile);
+                setQuizData(profile.latestQuizData || null);
 
-          <footer className="bg-black text-center p-4 text-xs text-gray-600">
-            <p>
-              Your program is informational and non-medical. Stop if pain or dizziness.
-              For medical concerns, consult a professional.
-            </p>
-          </footer>
-        </div>
-        <ContactSupportIcon />
-      </HashRouter>
-    </AppContext.Provider>
-  );
+            } else {
+                setCurrentUser(null);
+                setUserProfile(null);
+                 // Load from localStorage for guests
+                const savedData = localStorage.getItem(QUIZ_DATA_STORAGE_KEY);
+                setQuizData(savedData ? JSON.parse(savedData) : null);
+            }
+            setAuthLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    // Function to set quiz data and persist it
+    const handleSetQuizData = (data: QuizData | null) => {
+        setQuizData(data);
+        if (currentUser && userProfile && data) {
+            // Save to Firestore for logged-in users
+            saveUserAssessment(currentUser.uid, data).catch(console.error);
+             // Update local profile state immediately for responsiveness
+            setUserProfile(prevProfile => prevProfile ? { ...prevProfile, latestQuizData: data } : null);
+        } else {
+            // Save to localStorage for guests
+            if (data) {
+                localStorage.setItem(QUIZ_DATA_STORAGE_KEY, JSON.stringify(data));
+            } else {
+                localStorage.removeItem(QUIZ_DATA_STORAGE_KEY);
+            }
+        }
+    };
+
+
+return (
+    <AuthContext.Provider value={{ currentUser, userProfile, authLoading }}>
+        <AppContext.Provider value={{ quizData, setQuizData: handleSetQuizData }}>
+            <HashRouter>
+                <div className="flex flex-col min-h-screen">
+                    <main className="flex-grow">
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/assessment" element={<AssessmentPage />} />
+                            <Route path="/report" element={quizData ? <ReportPage /> : <Navigate to="/assessment" />} />
+                            <Route path="/workout-guide" element={<WorkoutGuidePage />} />
+                            <Route path="/my-plan" element={<MyPlanPage />} />
+                            <Route path="/progress" element={<ProgressPage />} />
+                            <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
+                            <Route path="/about" element={<AboutPage />} />
+                            <Route path="/trainer-login" element={<TrainerLoginPage />} />
+                            <Route path="/trainer-dashboard" element={<TrainerDashboardPage />} />
+                            {/* Add the new protected profile route */}
+                            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                            <Route path="*" element={<Navigate to="/" />} />
+                        </Routes>
+                    </main>
+                     <footer className="bg-black text-center p-4 text-xs text-gray-600">
+                        <p>Your program is informational and non-medical. Stop if pain or dizziness. For medical concerns, consult a professional.</p>
+                    </footer>
+                </div>
+                <ContactSupportIcon />
+            </HashRouter>
+        </AppContext.Provider>
+    </AuthContext.Provider>
+);
 }

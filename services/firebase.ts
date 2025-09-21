@@ -1,22 +1,36 @@
-// services/firebase.ts
+// FIX: Use Firebase v8 compat imports to resolve module export errors.
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-
-// Firebase config from environment variables (set in Vercel)
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyC5HHBHxastDpD3Eb4aHnASsxb73_puLwk",
+  authDomain: "ifitbot-94ca2.firebaseapp.com",
+  projectId: "ifitbot-94ca2",
+  storageBucket: "ifitbot-94ca2.firebasestorage.app",
+  messagingSenderId: "322143926987",
+  appId: "1:322143926987:web:9d4af3843ac6fc3059f94e",
+  measurementId: "G-1DRBYBM10N"
 };
 
-// Initialize Firebase app
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase
+// FIX: Use compat initialization to avoid errors and ensure single initialization.
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
-// Export Auth & Firestore instances for use in your app
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const auth = firebase.auth();
+export const db = firebase.firestore(); // Export firestore instance
+// FIX: Use v8 compat syntax for GoogleAuthProvider
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+export const signInWithGoogle = () => {
+    // FIX: Use v8 compat syntax for signInWithPopup
+    return auth.signInWithPopup(googleProvider);
+};
+
+export const logout = () => {
+    // FIX: Use v8 compat syntax for signOut
+    return auth.signOut();
+};

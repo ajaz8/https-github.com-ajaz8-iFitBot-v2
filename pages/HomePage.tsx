@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FileText, BookOpen, Dumbbell, Scale, Flame, Weight, Building, FileCheck2, TrendingUp, MessageSquare } from "lucide-react";
 import { AppContext } from "../App";
 import CalorieChatbot from '../components/CalorieChatbot';
-
-const ONBOARDING_KEY = 'ifit_onboarding_completed';
+import AuthDisplay from '../components/AuthDisplay';
 
 const AnimatedTitle = () => {
     const title = "iFit";
@@ -63,16 +63,8 @@ const SplashScreen = ({ onFinished }: { onFinished: () => void }) => {
 export default function Home() {
     const [loading, setLoading] = useState(true);
     const { quizData } = useContext(AppContext);
-    const navigate = useNavigate();
     const [showCalorieChatbot, setShowCalorieChatbot] = useState(false);
 
-
-    useEffect(() => {
-        const onboardingCompleted = localStorage.getItem(ONBOARDING_KEY);
-        if (!onboardingCompleted) {
-            navigate('/onboarding');
-        }
-    }, [navigate]);
 
     if (loading) {
         return <SplashScreen onFinished={() => setLoading(false)} />;
@@ -80,6 +72,9 @@ export default function Home() {
 
     return (
         <div className="min-h-screen w-full bg-black flex flex-col justify-center items-center p-4 relative overflow-hidden">
+             <div className="absolute top-6 right-6 z-20">
+                <AuthDisplay />
+            </div>
              <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/80 to-black"></div>
             <video
                 autoPlay

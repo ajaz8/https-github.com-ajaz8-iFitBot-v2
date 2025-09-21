@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AppContext } from '../App';
 import type { ReportData, QuizData } from '../types';
@@ -64,7 +65,6 @@ export default function ReportPage() {
         };
 
         generateReport();
-         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [quizData, navigate]);
 
     const handleSaveAsPdf = () => {

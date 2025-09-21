@@ -1,7 +1,43 @@
 
-import React from 'react';
-import { Sparkles, Target, Zap, ArrowLeft } from 'lucide-react';
+import React, { useContext } from 'react';
+import { Sparkles, Target, Zap, ArrowLeft, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../App';
+import { signInWithGoogle } from '../../services/firebase';
+
+const AuthGate = ({ onStart }: { onStart: () => void }) => {
+    const { currentUser, authLoading } = useContext(AuthContext);
+
+    if (authLoading) {
+        return (
+            <div className="bg-gray-700 text-white px-12 py-6 text-xl font-semibold rounded-full flex items-center justify-center">
+                Loading...
+            </div>
+        );
+    }
+
+    if (currentUser) {
+        return (
+            <button
+                onClick={onStart}
+                className="bg-gradient-to-r from-lime-500 to-green-500 hover:opacity-90 text-white px-12 py-6 text-xl font-semibold rounded-full shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105"
+            >
+                Start Your Assessment
+                <Sparkles className="w-6 h-6 ml-2 inline" />
+            </button>
+        );
+    }
+
+    return (
+        <button
+            onClick={signInWithGoogle}
+            className="bg-gradient-to-r from-lime-500 to-green-500 hover:opacity-90 text-white px-12 py-6 text-xl font-semibold rounded-full shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105"
+        >
+            Login with Google to Start
+            <LogIn className="w-6 h-6 ml-2 inline" />
+        </button>
+    );
+};
 
 export default function QuizWelcome({ onStart }: { onStart: () => void }) {
     return (
@@ -46,13 +82,7 @@ export default function QuizWelcome({ onStart }: { onStart: () => void }) {
                 </div>
 
                 <div>
-                    <button
-                        onClick={onStart}
-                        className="bg-gradient-to-r from-lime-500 to-green-500 hover:opacity-90 text-white px-12 py-6 text-xl font-semibold rounded-full shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105"
-                    >
-                        Start Your Assessment
-                        <Sparkles className="w-6 h-6 ml-2 inline" />
-                    </button>
+                    <AuthGate onStart={onStart} />
                     <p className="text-gray-400 text-sm mt-4">
                         Takes about 2 minutes • Free assessment
                     </p>

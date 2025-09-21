@@ -1,4 +1,3 @@
-
 export interface QuizData {
     id?: string;
     name: string;
@@ -220,4 +219,18 @@ export interface PersonalRecordEntry {
 export interface UserProgress {
   weightLog: WeightEntry[];
   personalRecords: PersonalRecordEntry[];
+}
+
+// Type for Firebase User
+export interface FirebaseUser {
+  uid: string;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+}
+
+// New User Profile type for Firestore
+export interface UserProfile extends FirebaseUser {
+  createdAt: string; // ISO string
+  latestQuizData?: QuizData;
 }

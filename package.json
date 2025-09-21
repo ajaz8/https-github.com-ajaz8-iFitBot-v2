@@ -15,7 +15,8 @@
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.544.0",
     "jspdf": "^3.0.3",
-    "react-router-dom": "^7.9.1"
+    "react-router-dom": "^7.9.1",
+    "firebase": "^12.3.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
